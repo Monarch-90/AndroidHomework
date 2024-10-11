@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">Hello World</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+    <string name="enter_text">Введите текст</string>
+    <string name="add">Добавить</string>
+    <string name="notes">Заметки</string>
+    <string name="onboarding_screen_3">Онбординг экран 3</string>
+    <string name="onboarding_screen_2">Онбординг экран 2</string>
+    <string name="create">Создать</string>
+    <string name="authorization">Авторизация</string>
+    <string name="repeat_password">Повторите пароль*</string>
+    <string name="password2">Пароль*</string>
+    <string name="email">email*</string>
+    <string name="login2">Логин*</string>
+    <string name="registration">Регистрация</string>
+    <string name="onboarding_screen_1">Онбординг экран 1</string>
+    <string name="login">Логин</string>
+    <string name="password">Пароль</string>
+
+</resources>

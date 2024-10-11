@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">Hello World</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+    <string name="enter_text">Enter text</string>
+    <string name="add">Add</string>
+    <string name="notes">Notes</string>
+    <string name="onboarding_screen_3">Onboarding screen 3</string>
+    <string name="onboarding_screen_2">Onboarding screen 2</string>
+    <string name="create">Create</string>
+    <string name="authorization">Authorization</string>
+    <string name="repeat_password">Repeat password*</string>
+    <string name="password2">Password*</string>
+    <string name="email">email*</string>
+    <string name="login2">Login*</string>
+    <string name="registration">Registration</string>
+    <string name="onboarding_screen_1">Onboarding screen 1</string>
+    <string name="login">Login</string>
+    <string name="password">Password</string>
+
+</resources>
