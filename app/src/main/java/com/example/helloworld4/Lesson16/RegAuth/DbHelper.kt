@@ -4,6 +4,8 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import com.example.helloworld4.R
+import com.google.android.material.snackbar.Snackbar
 
 class DbHelper(val context: Context, val factory: SQLiteDatabase.CursorFactory?) :
     SQLiteOpenHelper(context, "app", factory, 1) {
@@ -25,7 +27,6 @@ class DbHelper(val context: Context, val factory: SQLiteDatabase.CursorFactory?)
         values.put("pass", user.pass)
 
         val db = this.writableDatabase
-        db.insert("users", null, values)
 
         db.close()
     }
@@ -33,7 +34,8 @@ class DbHelper(val context: Context, val factory: SQLiteDatabase.CursorFactory?)
     fun getUser(login: String, pass: String): Boolean {
         val db = this.readableDatabase
 
-        val result = db.rawQuery("SELECT * FROM users WHERE login = '$login' AND pass = '$pass'", null)
+        val result =
+            db.rawQuery("SELECT * FROM users WHERE login = '$login' AND pass = '$pass'", null)
         return result.moveToFirst()
     }
 }

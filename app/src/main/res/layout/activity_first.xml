@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#201E25"
-    tools:context=".Lesson16.Onboarding.FirstActivity">
+    tools:context="com.example.helloworld4.Lesson16.Onboarding.FirstActivity">
 
     <androidx.appcompat.widget.AppCompatTextView
         android:layout_width="300dp"
@@ -13,7 +13,7 @@
         android:layout_marginTop="240dp"
         android:text="@string/onboarding_screen_1"
         android:textAlignment="center"
-        android:textColor="@color/material_dynamic_neutral70"
+        android:textColor="#9B9B9B"
         android:textSize="28sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"

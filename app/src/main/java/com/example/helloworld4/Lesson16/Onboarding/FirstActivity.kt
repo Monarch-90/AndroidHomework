@@ -9,7 +9,6 @@ import com.example.helloworld4.R
 class FirstActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setTheme(R.style.Theme_HelloWorld)
         setContentView(R.layout.activity_first)
 
         val button = findViewById<ImageView>(R.id.button_right_one)

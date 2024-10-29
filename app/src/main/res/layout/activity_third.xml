@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#201E25"
-    tools:context=".Lesson16.Onboarding.ThirdActivity">
+    tools:context="com.example.helloworld4.Lesson16.Onboarding.ThirdActivity">
 
     <androidx.appcompat.widget.AppCompatTextView
         android:layout_width="300dp"
@@ -13,7 +13,7 @@
         android:layout_marginTop="240dp"
         android:text="@string/onboarding_screen_3"
         android:textAlignment="center"
-        android:textColor="@color/material_dynamic_neutral70"
+        android:textColor="#9B9B9B"
         android:textSize="28sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -32,17 +32,5 @@
         android:src="@drawable/arrow_right"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
-
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/button_left_three"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginBottom="68dp"
-        android:contentDescription="back"
-        android:backgroundTint="#343138"
-        android:src="@drawable/arrow_left"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

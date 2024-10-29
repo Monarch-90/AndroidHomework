@@ -12,11 +12,12 @@ import com.example.helloworld4.Lesson16.Onboarding.ThirdActivity
 import com.example.helloworld4.R
 
 class Registration : AppCompatActivity() {
+
+    private val validation = "[a-zA-Z0-9]".toRegex()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_registration)
-
-        val buttonBack: ImageView = findViewById(R.id.button_back)
 
         val userLogin: EditText = findViewById(R.id.user_login)
         val userEmail: EditText = findViewById(R.id.user_email)
@@ -25,11 +26,6 @@ class Registration : AppCompatActivity() {
         val buttonReg: Button = findViewById(R.id.button_reg)
 
         val buttonGoAuth: TextView = findViewById(R.id.button_go_auth)
-
-        val intentBack = Intent(this.baseContext, ThirdActivity::class.java)
-        buttonBack.setOnClickListener {
-            startActivity(intentBack)
-        }
 
         buttonReg.setOnClickListener {
             val login = userLogin.text.toString().trim()
@@ -41,12 +37,14 @@ class Registration : AppCompatActivity() {
                 Toast.makeText(this, "Not Filled!", Toast.LENGTH_LONG).show()
             else if (pass != passConfirm)
                 Toast.makeText(this, "Passwords don't match!", Toast.LENGTH_LONG).show()
+            else if (!pass.matches(validation))
+                Toast.makeText(this, "Incorrect password", Toast.LENGTH_LONG).show()
             else {
                 val user = User(login, email, pass)
 
                 val db = DbHelper(this, null)
                 db.addUser(user)
-                Toast.makeText(this, "User $login created", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "User \"$login\" created", Toast.LENGTH_LONG).show()
 
                 userLogin.text.clear()
                 userEmail.text.clear()

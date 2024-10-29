@@ -5,9 +5,8 @@
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
     </style>
 
-    <style name="Theme.HelloWorld" parent="Base.Theme.HelloWorld" />
-
-    <style name="my_splash_theme" parent="Theme.Material3.Dark" />
-    <item name="windowBackground" type="drawable">@drawable/my_splash_av</item>
+    <style name="my_splash_theme" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="android:windowBackground" type="drawable">@drawable/my_splash_av</item>
+    </style>
 
 </resources>

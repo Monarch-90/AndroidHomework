@@ -12,51 +12,28 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
-        android:theme="@style/my_splash_theme"
+        android:theme="@style/Theme.AppCompat.NoActionBar"
         tools:targetApi="31">
+
         <activity
             android:name=".Lesson16.Onboarding.FirstActivity"
-            android:exported="true"
-            android:theme="@style/Theme.HelloWorld">
-
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
 
         <activity
-            android:name=".Lesson16.Onboarding.SecondActivity"
-            android:theme="@style/Theme.HelloWorld">
-
-        </activity>
-
+            android:name="com.example.helloworld4.Lesson16.Onboarding.SecondActivity"/>
         <activity
-            android:name=".Lesson16.Onboarding.ThirdActivity"
-            android:theme="@style/Theme.HelloWorld">
-
-        </activity>
-
+            android:name="com.example.helloworld4.Lesson16.Onboarding.ThirdActivity"/>
         <activity
-            android:name=".Lesson16.ToDo.ToDoList"
-            android:theme="@style/Theme.HelloWorld">
-
-        </activity>
-
+            android:name="com.example.helloworld4.Lesson16.ToDo.ToDoList"/>
         <activity
-            android:name=".Lesson16.RegAuth.Registration"
-            android:theme="@style/Theme.HelloWorld">
-
-        </activity>
-
+            android:name="com.example.helloworld4.Lesson16.RegAuth.Registration"/>
         <activity
-            android:name=".Lesson16.RegAuth.Authorization"
-            android:theme="@style/Theme.HelloWorld">
-
-        </activity>
-
+            android:name="com.example.helloworld4.Lesson16.RegAuth.Authorization"/>
     </application>
 
 </manifest>

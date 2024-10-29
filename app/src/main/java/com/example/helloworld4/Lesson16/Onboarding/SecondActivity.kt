@@ -12,17 +12,11 @@ class SecondActivity : AppCompatActivity() {
         setContentView(R.layout.activity_second)
 
         val buttonRight = findViewById<ImageView>(R.id.button_right_two)
-        val buttonLeft = findViewById<ImageView>(R.id.button_left_two)
 
         val intentRightButton = Intent(this.baseContext, ThirdActivity::class.java)
-        val intentLeftButton = Intent(this.baseContext, FirstActivity::class.java)
 
         buttonRight.setOnClickListener {
             startActivity(intentRightButton)
-        }
-
-        buttonLeft.setOnClickListener {
-            startActivity(intentLeftButton)
         }
     }
 }
