@@ -1,4 +1,4 @@
-package com.example.helloworld4.Lesson16.RegAuth
+package com.example.helloworld4.RegAuth
 
 import android.content.Intent
 import android.os.Bundle
@@ -9,14 +9,16 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.widget.doOnTextChanged
-import com.example.helloworld4.Lesson16.ToDo.ToDoList
+import androidx.lifecycle.lifecycleScope
+import com.example.helloworld4.ToDo.ToDoList
 import com.example.helloworld4.R
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class Authorization : AppCompatActivity() {
     private lateinit var userLogin: EditText
     private lateinit var userPass: EditText
-    private lateinit var userLoginAndPass: EditText
     private lateinit var buttonAuth: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,35 +40,47 @@ class Authorization : AppCompatActivity() {
 
             override fun afterTextChanged(s: Editable?) {}
         }
-
         userLogin.addTextChangedListener(textWatcher)
         userPass.addTextChangedListener(textWatcher)
-
         buttonAuth.isEnabled = false
-
-//        userLoginAndPass.doOnTextChanged { _, _, _, _ -> Bool
-//            buttonAuth.isEnabled = userLogin.text.isNotEmpty()
-//            check()
-//        }
 
         buttonAuth.setOnClickListener {
             val login = userLogin.text.toString().trim()
             val pass = userPass.text.toString().trim()
 
-            val db = DbHelper(this, null)
-            val isAuth = db.getUser(login, pass)
+            if (login != "" || pass != "") {
+                lifecycleScope.launch {
+                    try {
+                        val user = withContext(Dispatchers.IO) {
+                            DatabaseManager.getUserDao().getUser(login, pass)
+                        }
+                        if (user != null) {
+                            Toast.makeText(
+                                this@Authorization,
+                                "Successfully!",
+                                Toast.LENGTH_LONG
+                            ).show()
+                            userLogin.text.clear()
+                            userPass.text.clear()
 
-            if (isAuth) {
-                Toast.makeText(this, "Successfully!", Toast.LENGTH_LONG).show()
-                userLogin.text.clear()
-                userPass.text.clear()
-
-                val intentAuth = Intent(this.baseContext, ToDoList::class.java)
-                intentAuth.putExtra("loginKey", login)
-                setResult(RESULT_OK, intentAuth)
-                startActivity(intentAuth)
-            } else
-                Toast.makeText(this, "User \"$login\" does not exist.", Toast.LENGTH_LONG).show()
+                            val intentAuth =
+                                Intent(this@Authorization.baseContext, ToDoList::class.java)
+                            intentAuth.putExtra("loginKey", login)
+                            setResult(RESULT_OK, intentAuth)
+                            startActivity(intentAuth)
+                        } else {
+                            Toast.makeText(
+                                this@Authorization,
+                                "User \"$login\" does not exist.",
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
+                    } catch (e: Exception) {
+                        Toast.makeText(this@Authorization, "Error: ${e.message}", Toast.LENGTH_LONG)
+                            .show()
+                    }
+                }
+            }
         }
 
         val buttonGoReg: TextView = findViewById(R.id.button_go_reg)
@@ -76,11 +90,4 @@ class Authorization : AppCompatActivity() {
             startActivity(intentReg)
         }
     }
-
-//    fun combining(){
-//        userLoginAndPass = userLogin
-//        userLoginAndPass = userPass
-//
-//        buttonAuth.isEnabled = userLoginAndPass.text.isNotEmpty()
-//    }
 }

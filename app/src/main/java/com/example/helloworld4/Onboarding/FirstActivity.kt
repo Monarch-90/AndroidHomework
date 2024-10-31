@@ -1,4 +1,4 @@
-package com.example.helloworld4.Lesson16.Onboarding
+package com.example.helloworld4.Onboarding
 
 import android.content.Intent
 import android.os.Bundle

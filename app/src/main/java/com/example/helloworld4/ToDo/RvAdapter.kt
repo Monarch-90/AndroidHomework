@@ -1,6 +1,5 @@
-package com.example.helloworld4.Lesson16.ToDo
+package com.example.helloworld4.ToDo
 
-import android.content.ContentValues
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup

@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
     android:background="#201E25"
-    tools:context="com.example.helloworld4.Lesson16.Onboarding.SecondActivity">
+    tools:context=".Onboarding.SecondActivity">
 
     <androidx.appcompat.widget.AppCompatTextView
         android:layout_width="300dp"

@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#C1C1C1"
-    tools:context="com.example.helloworld4.Lesson16.ToDo.ToDoList">
+    tools:context=".ToDo.ToDoList">
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/login_text"
@@ -37,9 +37,9 @@
         android:id="@+id/button_back_home"
         android:layout_width="35dp"
         android:layout_height="35dp"
-        android:layout_marginTop="35dp"
-        android:layout_marginEnd="25dp"
-        android:src="@drawable/home"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="15dp"
+        android:src="@drawable/btn_home"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -58,32 +58,35 @@
         app:layout_constraintVertical_bias="0.079" />
 
     <androidx.appcompat.widget.AppCompatEditText
-        android:id="@+id/et_userData"
-        android:layout_width="250dp"
+        android:id="@+id/et_title"
+        android:layout_width="210dp"
         android:layout_height="60dp"
-        android:ems="10"
+        android:layout_marginTop="15dp"
+        android:hint="@string/enter_title"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textNotes" />
+
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/et_text"
+        android:layout_width="210dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="2dp"
         android:hint="@string/enter_text"
-        android:inputType="text"
-        android:textColor="#000000"
-        android:textColorHint="#6a6a6a"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/textNotes"
-        app:layout_constraintHorizontal_bias="0.513"
-        app:layout_constraintStart_toStartOf="@+id/textNotes"
-        app:layout_constraintTop_toBottomOf="@id/textNotes"
-        app:layout_constraintVertical_bias="0.088" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/et_title" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/buttonAdd"
         style="@style/MyButtonStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="36dp"
+        android:layout_marginTop="15dp"
         android:text="@string/add"
-        app:layout_constraintEnd_toEndOf="@+id/et_userData"
-        app:layout_constraintHorizontal_bias="0.504"
-        app:layout_constraintStart_toStartOf="@+id/et_userData"
-        app:layout_constraintTop_toBottomOf="@+id/et_userData" />
+        app:layout_constraintEnd_toEndOf="@+id/et_text"
+        app:layout_constraintStart_toStartOf="@+id/et_text"
+        app:layout_constraintTop_toBottomOf="@+id/et_text" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rec_view"
@@ -96,34 +99,5 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/buttonAdd" />
 
-    <androidx.appcompat.widget.AppCompatEditText
-        android:id="@+id/et_title"
-        android:layout_width="125dp"
-        android:layout_height="60dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginBottom="344dp"
-        android:hint="title"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <androidx.appcompat.widget.AppCompatEditText
-        android:id="@+id/et_text"
-        android:layout_width="125dp"
-        android:layout_height="60dp"
-        android:layout_marginStart="140dp"
-        android:layout_marginBottom="336dp"
-        android:hint="title"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <androidx.appcompat.widget.AppCompatEditText
-        android:id="@+id/et_date"
-        android:layout_width="125dp"
-        android:layout_height="60dp"
-        android:layout_marginStart="264dp"
-        android:layout_marginBottom="324dp"
-        android:hint="title"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
