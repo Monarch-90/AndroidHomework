@@ -22,5 +22,6 @@
     <string name="password">Пароль</string>
     <string name="enter_title">Введите название</string>
     <string name="logined">"Вошел: "</string>
+    <string name="btn_save">Сохранить</string>
 
 </resources>
