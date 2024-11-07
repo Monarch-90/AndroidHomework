@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     id("com.google.devtools.ksp")
+    id("org.jetbrains.kotlin.plugin.parcelize")
 }
 
 android {
@@ -59,6 +60,10 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.6")
+    implementation ("com.github.bumptech.glide:glide:4.16.0")
+    annotationProcessor ("com.github.bumptech.glide:compiler:4.16.0")
+    implementation ("androidx.appcompat:appcompat:1.7.0")
+    implementation ("com.google.android.material:material:1.12.0")
     implementation(libs.androidx.room.ktx.v242)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

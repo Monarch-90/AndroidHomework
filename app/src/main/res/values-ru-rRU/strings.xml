@@ -20,5 +20,7 @@
     <string name="onboarding_screen_1">Онбординг экран 1</string>
     <string name="login">Логин</string>
     <string name="password">Пароль</string>
+    <string name="enter_title">Введите название</string>
+    <string name="logined">"Вошел: "</string>
 
 </resources>
