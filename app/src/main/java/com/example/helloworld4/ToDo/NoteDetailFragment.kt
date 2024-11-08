@@ -1,0 +1,226 @@
+package com.example.helloworld4.ToDo
+
+import android.app.Activity.RESULT_OK
+import android.content.Context.MODE_PRIVATE
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.graphics.ImageDecoder
+import android.net.Uri
+import android.os.Bundle
+import android.os.Environment
+import android.provider.MediaStore
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.widget.AppCompatEditText
+import androidx.appcompat.widget.AppCompatImageView
+import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResult
+import com.example.helloworld4.Constants
+import com.example.helloworld4.databinding.FragmentNoteDetailBinding
+import java.io.File
+import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+
+class NoteDetailFragment : Fragment() {
+    private var _binding: FragmentNoteDetailBinding? = null
+    private val binding get() = _binding!!
+    private lateinit var getImage: ActivityResultLauncher<Intent>
+    private lateinit var imageContainer: AppCompatImageView
+    private var currentPhotoUri: Uri? = null
+    private lateinit var requestPermissionLauncher: ActivityResultLauncher<Array<String>>
+    private lateinit var title: AppCompatEditText
+    private lateinit var text: AppCompatEditText
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        _binding = FragmentNoteDetailBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        imageContainer = binding.ivContainer
+        title = binding.etTitle
+        text = binding.etText
+
+        binding.btnShare.setOnClickListener {
+            shareNote(title.text.toString(), text.text.toString())
+        }
+
+        registerOpenOrCreateImage()
+
+        binding.btnImage.setOnClickListener {
+            handleImageSelection()
+        }
+
+        binding.btnSave.setOnClickListener {
+            saveNote()
+        }
+    }
+
+    private fun saveNote() {
+        val title = title.text.toString()
+        val text = text.text.toString()
+        val date = getCurrentDate()
+        val imageUri = currentPhotoUri?.toString()
+
+        val note = Note(title, text, date, imageUri)
+
+        if (title.isNotEmpty() || text.isNotEmpty() || imageUri != null) {
+            val sharedPreferences =
+                activity?.getSharedPreferences(Constants.NOTES_PREF_KEY, MODE_PRIVATE)
+            val editor = sharedPreferences?.edit()
+            editor?.putString(Constants.TITLE_KEY, note.title)
+            editor?.putString(Constants.TEXT_KEY, note.text)
+            editor?.putString(Constants.DATE_KEY, note.date)
+            editor?.putString(Constants.IMAGE_KEY, note.imageUri)
+            editor?.apply()
+
+            val bundle = Bundle().apply {
+                putString(Constants.TITLE_KEY, note.title)
+                putString(Constants.TEXT_KEY, note.text)
+                putString(Constants.DATE_KEY, note.date)
+                putString(Constants.IMAGE_KEY, note.imageUri)
+            }
+            setFragmentResult(Constants.DATA_SEND_KEY, bundle)
+            requireActivity().supportFragmentManager.popBackStack()
+        } else {
+            showMessage("Fields are empty")
+        }
+    }
+
+    private fun handleImageSelection() {
+        if (checkPermissions()) {
+            openChooser()
+        } else {
+            requestPermissions()
+        }
+    }
+
+    private fun registerOpenOrCreateImage() {
+        getImage =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+                if (result.resultCode == RESULT_OK) {
+                    val data: Intent? = result.data
+                    if (data?.data != null) {
+                        currentPhotoUri = data.data
+                        imageContainer.setImageURI(currentPhotoUri)
+                    } else if (currentPhotoUri != null) {
+                        val bitmap = currentPhotoUri?.let { uri ->
+                            val source =
+                                ImageDecoder.createSource(requireActivity().contentResolver, uri)
+                            ImageDecoder.decodeBitmap(source)
+                        }
+                        imageContainer.setImageBitmap(bitmap)
+                    }
+                } else {
+                    showMessage("Failed to get image")
+                }
+            }
+        requestPermissionLauncher = registerForActivityResult(
+            ActivityResultContracts.RequestMultiplePermissions()
+        ) { permissions ->
+            if (permissions[android.Manifest.permission.CAMERA] == true &&
+                permissions[android.Manifest.permission.READ_EXTERNAL_STORAGE] == true &&
+                permissions[android.Manifest.permission.WRITE_EXTERNAL_STORAGE] == true
+            ) {
+                openChooser()
+            } else {
+                showMessage("Permissions are required")
+            }
+        }
+    }
+
+    private fun checkPermissions(): Boolean {
+        val permissions = arrayOf(
+            android.Manifest.permission.CAMERA,
+            android.Manifest.permission.READ_EXTERNAL_STORAGE,
+            android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+        )
+        return permissions.all { permission ->
+            ContextCompat.checkSelfPermission(
+                requireContext(),
+                permission
+            ) == PackageManager.PERMISSION_GRANTED
+        }
+    }
+
+    private fun requestPermissions() {
+        requestPermissionLauncher.launch(
+            arrayOf(
+                android.Manifest.permission.CAMERA,
+                android.Manifest.permission.READ_EXTERNAL_STORAGE,
+                android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+            )
+        )
+    }
+
+    private fun createImageFile(): File {
+        val timeStamp: String =
+            SimpleDateFormat("ddMMyyyy_HHmm", Locale.getDefault()).format(Date())
+        val storageDir: File =
+            requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES)!!
+        return File.createTempFile("JPEG_${timeStamp}_", ".jpg", storageDir).apply {
+            currentPhotoUri = Uri.fromFile(this)
+        }
+    }
+
+    private fun openChooser() {
+        val pickPhotoIntent =
+            Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        val takePhotoIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        val photoFile: File? = try {
+            createImageFile()
+        } catch (_: IOException) {
+            showMessage("Error adding image")
+            null
+        }
+        photoFile?.also {
+            currentPhotoUri =
+                FileProvider.getUriForFile(requireContext(), "com.example.helloworld4.provider", it)
+            takePhotoIntent.putExtra(MediaStore.EXTRA_OUTPUT, currentPhotoUri)
+        }
+        val chooserIntent = Intent.createChooser(pickPhotoIntent, "Select source")
+        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, arrayOf(takePhotoIntent))
+        getImage.launch(chooserIntent)
+    }
+
+    private fun shareNote(title: String?, text: String?) {
+        val date = getCurrentDate()
+        val fullNote = "$title\n$text\n$date"
+        val shareIntent = Intent().apply {
+            action = Intent.ACTION_SEND
+            putExtra(Intent.EXTRA_TEXT, fullNote)
+            type = "text/plain"
+        }
+        if (shareIntent.resolveActivity(requireActivity().packageManager) != null) {
+            startActivity(Intent.createChooser(shareIntent, "Share note via:"))
+        }
+    }
+
+    private fun showMessage(message: String) {
+        Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show()
+    }
+
+    private fun getCurrentDate(): String {
+        val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+        return dateFormat.format(Date())
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+}

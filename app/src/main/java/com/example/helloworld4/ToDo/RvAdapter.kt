@@ -4,67 +4,57 @@ import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.widget.AppCompatImageView
-import androidx.appcompat.widget.AppCompatTextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.helloworld4.Constants
-import com.example.helloworld4.R
+import com.example.helloworld4.databinding.RvImageSampleBinding
+import com.example.helloworld4.databinding.RvTextSampleBinding
 
 class RvAdapter(private var list: List<Note>) :
     RecyclerView.Adapter<RvAdapter.BaseViewHolder>() {
 
-    abstract class BaseViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    abstract class BaseViewHolder(binding: View) : RecyclerView.ViewHolder(binding) {
         abstract fun bind(note: Note)
     }
 
-    class TextNoteViewHolder(itemView: View) : BaseViewHolder(itemView) {
-        private val title: AppCompatTextView = itemView.findViewById(R.id.tv_title)
-        private val text: AppCompatTextView = itemView.findViewById(R.id.tv_text)
-        private val date: AppCompatTextView = itemView.findViewById(R.id.tv_date)
-
+    class TextNoteViewHolder(private val binding: RvTextSampleBinding) :
+        BaseViewHolder(binding.root) {
         override fun bind(note: Note) {
-            title.text = note.title
-            text.text = note.text
-            date.text = note.date
+            binding.rvtTitle.text = note.title
+            binding.rvtText.text = note.text
+            binding.rvtDate.text = note.date
         }
     }
 
-    class ImageNoteViewHolder(itemView: View) : BaseViewHolder(itemView) {
-        val title: AppCompatTextView = itemView.findViewById(R.id.tv_title)
-        val text: AppCompatTextView = itemView.findViewById(R.id.tv_text)
-        val date: AppCompatTextView = itemView.findViewById(R.id.tv_date)
-        val imageView: AppCompatImageView = itemView.findViewById(R.id.iv_image_icon)
-
+    class ImageNoteViewHolder(private val binding: RvImageSampleBinding) :
+        BaseViewHolder(binding.root) {
         override fun bind(note: Note) {
-            title.text = note.title
-            text.text = note.text
-            date.text = note.date
-            imageView.setImageURI(Uri.parse(note.imageUri))
+            binding.rviTitle.text = note.title
+            binding.rviText.text = note.text
+            binding.rviDate.text = note.date
+            binding.ivImageIcon.setImageURI(Uri.parse(note.imageUri))
         }
     }
 
     override fun getItemViewType(position: Int): Int {
         return if (list[position].imageUri == null) {
-            Constants.TEXT_NOTE
+            Constants.TEXT_NOTE_KEY
         } else {
-            Constants.IMAGE_NOTE
+            Constants.IMAGE_NOTE_KEY
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder {
         return when (viewType) {
-            Constants.TEXT_NOTE -> {
-                val view =
-                    LayoutInflater.from(parent.context)
-                        .inflate(R.layout.rv_text_sample, parent, false)
-                TextNoteViewHolder(view)
+            Constants.TEXT_NOTE_KEY -> {
+                val binding =
+                    RvTextSampleBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                TextNoteViewHolder(binding)
             }
 
-            Constants.IMAGE_NOTE -> {
-                val view =
-                    LayoutInflater.from(parent.context)
-                        .inflate(R.layout.rv_image_sample, parent, false)
-                ImageNoteViewHolder(view)
+            Constants.IMAGE_NOTE_KEY -> {
+                val binding =
+                    RvImageSampleBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                ImageNoteViewHolder(binding)
             }
 
             else -> throw IllegalArgumentException("Invalid view type")
