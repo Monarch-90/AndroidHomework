@@ -1,19 +1,23 @@
-package com.example.helloworld4.ToDo
+package com.example.helloworld4.notes.view
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.helloworld4.Constants
 import com.example.helloworld4.databinding.FragmentTodolistBinding
+import com.example.helloworld4.notes.data.Note
+import com.example.helloworld4.notes.model.RvAdapter
+import com.example.helloworld4.notes.view_model.NoteViewModel
 
 class ToDoListFragment : Fragment() {
     private var _binding: FragmentTodolistBinding? = null
     private val binding get() = _binding!!
     private lateinit var adapter: RvAdapter
     private val toDoList = mutableListOf<Note>()
+    private lateinit var noteViewModel: NoteViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -26,23 +30,18 @@ class ToDoListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val binding = FragmentTodolistBinding.bind(view)
 
         val recView = binding.recView
+        noteViewModel = ViewModelProvider(requireActivity())[NoteViewModel::class.java]
 
         adapter = RvAdapter(toDoList)
         recView.adapter = adapter
         recView.layoutManager = LinearLayoutManager(requireContext())
 
-            parentFragmentManager.setFragmentResultListener(Constants.DATA_SEND_KEY, this) { _, bundle ->
-                    val title = bundle.getString(Constants.TITLE_KEY, "")
-                    val text = bundle.getString(Constants.TEXT_KEY,"")
-                    val date = bundle.getString(Constants.DATE_KEY, "")
-                    val imageUri = bundle.getString(Constants.IMAGE_KEY)
-
-                    val newNote = Note(title, text, date, imageUri)
-                    toDoList.add(newNote)
-                    adapter.updateNotes(toDoList)
-            }
+        noteViewModel.notes.observe(viewLifecycleOwner) { notes ->
+            adapter.updateNotes(notes)
+        }
 
         binding.btnAdd.setOnClickListener {
             (activity as ContainerActivity).navigateTo(NoteDetailFragment())

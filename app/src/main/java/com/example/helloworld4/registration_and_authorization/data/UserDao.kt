@@ -1,4 +1,4 @@
-package com.example.helloworld4.RegAuth
+package com.example.helloworld4.registration_and_authorization.data
 
 import androidx.room.*
 

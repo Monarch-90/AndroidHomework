@@ -1,4 +1,4 @@
-package com.example.helloworld4.ToDo
+package com.example.helloworld4.notes.data
 
 import java.io.Serializable
 

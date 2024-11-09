@@ -1,9 +1,7 @@
-package com.example.helloworld4.RegAuth
+package com.example.helloworld4.registration_and_authorization.view
 
-import android.content.ContentValues.TAG
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
@@ -11,6 +9,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.helloworld4.R
+import com.example.helloworld4.registration_and_authorization.data.DatabaseManager
+import com.example.helloworld4.registration_and_authorization.data.User
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext

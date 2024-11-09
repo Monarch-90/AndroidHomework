@@ -1,4 +1,4 @@
-package com.example.helloworld4.ToDo
+package com.example.helloworld4.notes.model
 
 import android.net.Uri
 import android.view.LayoutInflater
@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.helloworld4.Constants
 import com.example.helloworld4.databinding.RvImageSampleBinding
 import com.example.helloworld4.databinding.RvTextSampleBinding
+import com.example.helloworld4.notes.data.Note
 
 class RvAdapter(private var list: List<Note>) :
     RecyclerView.Adapter<RvAdapter.BaseViewHolder>() {

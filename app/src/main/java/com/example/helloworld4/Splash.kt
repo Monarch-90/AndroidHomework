@@ -4,9 +4,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Looper
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
-import com.example.helloworld4.Onboarding.FirstActivity
-import com.example.helloworld4.RegAuth.DatabaseManager
+import com.example.helloworld4.onboarding.FirstActivity
+import com.example.helloworld4.registration_and_authorization.data.DatabaseManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -32,7 +31,7 @@ class Splash : AppCompatActivity() {
             val intentFirstActivity = Intent(this, FirstActivity::class.java)
             startActivity(intentFirstActivity)
             finish()
-        }, 5000)
+        }, 1000)
 
 
     }

@@ -7,7 +7,7 @@
     android:background="#201E25"
     android:id="@+id/reg_view"
     android:orientation="vertical"
-    tools:context=".RegAuth.Registration">
+    tools:context=".registration_and_authorization.view.Registration">
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/appCompatTextView2"

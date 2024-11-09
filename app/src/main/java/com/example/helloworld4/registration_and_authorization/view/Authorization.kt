@@ -1,4 +1,4 @@
-package com.example.helloworld4.RegAuth
+package com.example.helloworld4.registration_and_authorization.view
 
 import android.content.Intent
 import android.os.Bundle
@@ -10,8 +10,10 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import com.example.helloworld4.ToDo.ToDoList
+import com.example.helloworld4.Constants
+import com.example.helloworld4.notes.view.ContainerActivity
 import com.example.helloworld4.R
+import com.example.helloworld4.registration_and_authorization.data.DatabaseManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -64,8 +66,8 @@ class Authorization : AppCompatActivity() {
                             userPass.text.clear()
 
                             val intentAuth =
-                                Intent(this@Authorization.baseContext, ToDoList::class.java)
-                            intentAuth.putExtra("loginKey", login)
+                                Intent(this@Authorization.baseContext, ContainerActivity::class.java)
+                            intentAuth.putExtra(Constants.LOGIN_KEY, login)
                             setResult(RESULT_OK, intentAuth)
                             startActivity(intentAuth)
                         } else {

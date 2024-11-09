@@ -1,7 +1,7 @@
-package com.example.helloworld4.ToDo
+package com.example.helloworld4.notes.view
 
+import android.Manifest
 import android.app.Activity.RESULT_OK
-import android.content.Context.MODE_PRIVATE
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.ImageDecoder
@@ -20,9 +20,10 @@ import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.setFragmentResult
-import com.example.helloworld4.Constants
+import androidx.lifecycle.ViewModelProvider
 import com.example.helloworld4.databinding.FragmentNoteDetailBinding
+import com.example.helloworld4.notes.data.Note
+import com.example.helloworld4.notes.view_model.NoteViewModel
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -38,6 +39,7 @@ class NoteDetailFragment : Fragment() {
     private lateinit var requestPermissionLauncher: ActivityResultLauncher<Array<String>>
     private lateinit var title: AppCompatEditText
     private lateinit var text: AppCompatEditText
+    private lateinit var noteViewModel: NoteViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -50,7 +52,9 @@ class NoteDetailFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val binding = FragmentNoteDetailBinding.bind(view)
 
+        noteViewModel = ViewModelProvider(requireActivity())[NoteViewModel::class.java]
         imageContainer = binding.ivContainer
         title = binding.etTitle
         text = binding.etText
@@ -79,25 +83,10 @@ class NoteDetailFragment : Fragment() {
         val note = Note(title, text, date, imageUri)
 
         if (title.isNotEmpty() || text.isNotEmpty() || imageUri != null) {
-            val sharedPreferences =
-                activity?.getSharedPreferences(Constants.NOTES_PREF_KEY, MODE_PRIVATE)
-            val editor = sharedPreferences?.edit()
-            editor?.putString(Constants.TITLE_KEY, note.title)
-            editor?.putString(Constants.TEXT_KEY, note.text)
-            editor?.putString(Constants.DATE_KEY, note.date)
-            editor?.putString(Constants.IMAGE_KEY, note.imageUri)
-            editor?.apply()
-
-            val bundle = Bundle().apply {
-                putString(Constants.TITLE_KEY, note.title)
-                putString(Constants.TEXT_KEY, note.text)
-                putString(Constants.DATE_KEY, note.date)
-                putString(Constants.IMAGE_KEY, note.imageUri)
-            }
-            setFragmentResult(Constants.DATA_SEND_KEY, bundle)
+            noteViewModel.addNote(note)
             requireActivity().supportFragmentManager.popBackStack()
         } else {
-            showMessage("Fields are empty")
+            showMessage("All fields are empty")
         }
     }
 
@@ -132,9 +121,9 @@ class NoteDetailFragment : Fragment() {
         requestPermissionLauncher = registerForActivityResult(
             ActivityResultContracts.RequestMultiplePermissions()
         ) { permissions ->
-            if (permissions[android.Manifest.permission.CAMERA] == true &&
-                permissions[android.Manifest.permission.READ_EXTERNAL_STORAGE] == true &&
-                permissions[android.Manifest.permission.WRITE_EXTERNAL_STORAGE] == true
+            if (permissions[Manifest.permission.CAMERA] == true &&
+                permissions[Manifest.permission.READ_EXTERNAL_STORAGE] == true &&
+                permissions[Manifest.permission.WRITE_EXTERNAL_STORAGE] == true
             ) {
                 openChooser()
             } else {
@@ -145,9 +134,9 @@ class NoteDetailFragment : Fragment() {
 
     private fun checkPermissions(): Boolean {
         val permissions = arrayOf(
-            android.Manifest.permission.CAMERA,
-            android.Manifest.permission.READ_EXTERNAL_STORAGE,
-            android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+            Manifest.permission.CAMERA,
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
         )
         return permissions.all { permission ->
             ContextCompat.checkSelfPermission(
@@ -160,9 +149,9 @@ class NoteDetailFragment : Fragment() {
     private fun requestPermissions() {
         requestPermissionLauncher.launch(
             arrayOf(
-                android.Manifest.permission.CAMERA,
-                android.Manifest.permission.READ_EXTERNAL_STORAGE,
-                android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+                Manifest.permission.CAMERA,
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
             )
         )
     }

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#201E25"
-    tools:context=".ToDo.NoteDetailFragment">
+    tools:context=".notes.view.NoteDetailFragment">
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tv_date"
