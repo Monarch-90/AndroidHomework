@@ -23,6 +23,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.helloworld4.databinding.FragmentNoteDetailBinding
 import com.example.helloworld4.notes.data.Note
+import com.example.helloworld4.notes.intent.NoteIntent
 import com.example.helloworld4.notes.view_model.NoteViewModel
 import java.io.File
 import java.io.IOException
@@ -60,7 +61,7 @@ class NoteDetailFragment : Fragment() {
         text = binding.etText
 
         binding.btnShare.setOnClickListener {
-            shareNote(title.text.toString(), text.text.toString())
+            shareNote()
         }
 
         registerOpenOrCreateImage()
@@ -75,18 +76,37 @@ class NoteDetailFragment : Fragment() {
     }
 
     private fun saveNote() {
+        val note = createNoteFromInput()
+
+        if (note != null) {
+            noteViewModel.processIntent(NoteIntent.AddNote(note))
+            requireActivity().supportFragmentManager.popBackStack()
+        } else {
+            showMessage("All fields are empty")
+        }
+    }
+
+    private fun shareNote() {
+        val note = createNoteFromInput()
+
+        if (note != null) {
+            noteViewModel.processIntent(NoteIntent.ShareNote(note))
+            shareNoteExternally(title.text.toString(), text.text.toString())
+        } else {
+            showMessage("All fields are empty")
+        }
+    }
+
+    private fun createNoteFromInput(): Note? {
         val title = title.text.toString()
         val text = text.text.toString()
         val date = getCurrentDate()
         val imageUri = currentPhotoUri?.toString()
 
-        val note = Note(title, text, date, imageUri)
-
-        if (title.isNotEmpty() || text.isNotEmpty() || imageUri != null) {
-            noteViewModel.addNote(note)
-            requireActivity().supportFragmentManager.popBackStack()
+        return if (title.isNotEmpty() || text.isNotEmpty() || imageUri != null) {
+            Note(title, text, date, imageUri)
         } else {
-            showMessage("All fields are empty")
+            null
         }
     }
 
@@ -186,7 +206,7 @@ class NoteDetailFragment : Fragment() {
         getImage.launch(chooserIntent)
     }
 
-    private fun shareNote(title: String?, text: String?) {
+    private fun shareNoteExternally(title: String?, text: String?) {
         val date = getCurrentDate()
         val fullNote = "$title\n$text\n$date"
         val shareIntent = Intent().apply {

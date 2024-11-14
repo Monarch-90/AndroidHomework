@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.helloworld4.databinding.FragmentTodolistBinding
 import com.example.helloworld4.notes.data.Note
+import com.example.helloworld4.notes.intent.NoteIntent
 import com.example.helloworld4.notes.model.RvAdapter
 import com.example.helloworld4.notes.view_model.NoteViewModel
 
@@ -32,20 +33,21 @@ class ToDoListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val binding = FragmentTodolistBinding.bind(view)
 
-        val recView = binding.recView
         noteViewModel = ViewModelProvider(requireActivity())[NoteViewModel::class.java]
 
         adapter = RvAdapter(toDoList)
-        recView.adapter = adapter
-        recView.layoutManager = LinearLayoutManager(requireContext())
+        binding.recView.adapter = adapter
+        binding.recView.layoutManager = LinearLayoutManager(requireContext())
 
-        noteViewModel.notes.observe(viewLifecycleOwner) { notes ->
-            adapter.updateNotes(notes)
+        noteViewModel.state.observe(viewLifecycleOwner) { state ->
+            adapter.updateNotes(state.notes)
         }
 
         binding.btnAdd.setOnClickListener {
             (activity as ContainerActivity).navigateTo(NoteDetailFragment())
         }
+
+        noteViewModel.processIntent(NoteIntent.LoadNotes)
     }
 
     override fun onDestroyView() {

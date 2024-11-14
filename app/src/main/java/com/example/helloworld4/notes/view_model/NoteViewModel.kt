@@ -4,12 +4,18 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.helloworld4.notes.data.Note
+import com.example.helloworld4.notes.intent.NoteIntent
+import com.example.helloworld4.notes.reducer.NoteReducer
+import com.example.helloworld4.notes.state.NoteState
 
 class NoteViewModel : ViewModel() {
-    private val _notes = MutableLiveData<List<Note>>(emptyList())
-    val notes: LiveData<List<Note>> get() = _notes
+    private val reducer = NoteReducer()
+    private val _state = MutableLiveData(NoteState())
+    val state: LiveData<NoteState> get() = _state
 
-    fun addNote(note: Note) {
-        _notes.value = _notes.value?.plus(note)
+    fun processIntent(intent: NoteIntent) {
+        val currentState = _state.value ?: NoteState()
+        val newState = reducer.reduce(currentState, intent)
+        _state.value = newState
     }
 }
