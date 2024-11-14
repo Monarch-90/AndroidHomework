@@ -3,7 +3,6 @@ package com.example.helloworld4.notes.view_model
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.helloworld4.notes.data.Note
 import com.example.helloworld4.notes.intent.NoteIntent
 import com.example.helloworld4.notes.reducer.NoteReducer
 import com.example.helloworld4.notes.state.NoteState
