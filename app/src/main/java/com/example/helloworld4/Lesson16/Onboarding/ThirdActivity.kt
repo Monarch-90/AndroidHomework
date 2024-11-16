@@ -1,10 +1,10 @@
-package com.example.helloworld4.onboarding
+package com.example.helloworld4.Lesson16.Onboarding
 
 import android.content.Intent
 import android.os.Bundle
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
-import com.example.helloworld4.registration_and_authorization.view.Registration
+import com.example.helloworld4.Lesson16.RegAuth.Registration
 import com.example.helloworld4.R
 
 class ThirdActivity : AppCompatActivity() {
