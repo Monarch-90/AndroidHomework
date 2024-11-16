@@ -20,11 +20,11 @@ import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import com.example.helloworld4.databinding.FragmentNoteDetailBinding
 import com.example.helloworld4.notes.data.Note
 import com.example.helloworld4.notes.intent.NoteIntent
 import com.example.helloworld4.notes.view_model.NoteViewModel
+import org.koin.android.ext.android.inject
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -40,7 +40,7 @@ class NoteDetailFragment : Fragment() {
     private lateinit var requestPermissionLauncher: ActivityResultLauncher<Array<String>>
     private lateinit var title: AppCompatEditText
     private lateinit var text: AppCompatEditText
-    private lateinit var noteViewModel: NoteViewModel
+    private val noteViewModel: NoteViewModel by inject()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -55,7 +55,6 @@ class NoteDetailFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val binding = FragmentNoteDetailBinding.bind(view)
 
-        noteViewModel = ViewModelProvider(requireActivity())[NoteViewModel::class.java]
         imageContainer = binding.ivContainer
         title = binding.etTitle
         text = binding.etText

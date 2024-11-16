@@ -24,9 +24,8 @@
         </intent>
     </queries>
 
-<!--в <application удалил android:name=".RegAuth.MyApp"-->
     <application
-
+        android:name=".MyApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -38,27 +37,27 @@
         tools:targetApi="31">
 
         <activity
-        android:name="com.example.helloworld4.notes.view.ContainerActivity"
-        android:exported="true">
+            android:name="com.example.helloworld4.notes.view.ContainerActivity"
+            android:exported="true">
             <!--            android:name=".Splash"-->
-        <!--            android:theme="@style/My.Theme">-->
-        <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
-    </activity>
+            <!--            android:theme="@style/My.Theme">-->
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
 
-    <provider
-        android:name="androidx.core.content.FileProvider"
-        android:authorities="com.example.helloworld4.provider"
-        android:exported="false"
-        android:grantUriPermissions="true" >
-        <meta-data
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.example.helloworld4.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
 
-        android:name="android.support.FILE_PROVIDER_PATHS"
-        android:resource="@xml/file_paths" />
-    </provider>
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
 
-</application>
+    </application>
 
-    </manifest>
+</manifest>
