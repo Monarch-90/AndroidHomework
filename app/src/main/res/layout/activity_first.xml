@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#201E25"
-    tools:context="com.example.helloworld4.Lesson16.Onboarding.FirstActivity">
+    android:background="#201E25">
 
     <androidx.appcompat.widget.AppCompatTextView
         android:layout_width="300dp"
