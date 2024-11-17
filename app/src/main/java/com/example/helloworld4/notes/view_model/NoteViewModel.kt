@@ -7,8 +7,7 @@ import com.example.helloworld4.notes.intent.NoteIntent
 import com.example.helloworld4.notes.reducer.NoteReducer
 import com.example.helloworld4.notes.state.NoteState
 
-class NoteViewModel : ViewModel() {
-    private val reducer = NoteReducer()
+class NoteViewModel(private val reducer: NoteReducer) : ViewModel() {
     private val _state = MutableLiveData(NoteState())
     val state: LiveData<NoteState> get() = _state
 

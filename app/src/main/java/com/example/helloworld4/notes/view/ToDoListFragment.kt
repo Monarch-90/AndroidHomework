@@ -5,20 +5,24 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.helloworld4.databinding.FragmentTodolistBinding
 import com.example.helloworld4.notes.data.Note
 import com.example.helloworld4.notes.intent.NoteIntent
 import com.example.helloworld4.notes.model.RvAdapter
 import com.example.helloworld4.notes.view_model.NoteViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 
 class ToDoListFragment : Fragment() {
     private var _binding: FragmentTodolistBinding? = null
     private val binding get() = _binding!!
     private lateinit var adapter: RvAdapter
     private val toDoList = mutableListOf<Note>()
-    private lateinit var noteViewModel: NoteViewModel
+    private val noteViewModel: NoteViewModel by inject()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -33,8 +37,6 @@ class ToDoListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val binding = FragmentTodolistBinding.bind(view)
 
-        noteViewModel = ViewModelProvider(requireActivity())[NoteViewModel::class.java]
-
         adapter = RvAdapter(toDoList)
         binding.recView.adapter = adapter
         binding.recView.layoutManager = LinearLayoutManager(requireContext())
@@ -44,10 +46,39 @@ class ToDoListFragment : Fragment() {
         }
 
         binding.btnAdd.setOnClickListener {
-            (activity as ContainerActivity).navigateTo(NoteDetailFragment())
+            performTaskWithDelay()
         }
 
         noteViewModel.processIntent(NoteIntent.LoadNotes)
+    }
+
+    private fun showProgressBar() {
+        binding.prBar.visibility = View.VISIBLE
+    }
+
+    private fun hideProgressbar() {
+        binding.prBar.visibility = View.GONE
+    }
+
+    private suspend fun updateProgressBar() {
+        val totalTime = 3000L
+        val intervalTime = 100L
+        val totalSteps = totalTime / intervalTime
+
+        for(step in 1..totalSteps) {
+            delay(intervalTime)
+            val progress = (step.toFloat() / totalSteps * 100).toInt()
+            binding.prBar.progress = progress
+        }
+    }
+
+    private fun performTaskWithDelay() {
+        showProgressBar()
+        lifecycleScope.launch(Dispatchers.Main) {
+            updateProgressBar()
+            (activity as ContainerActivity).navigateTo(NoteDetailFragment())
+            hideProgressbar()
+        }
     }
 
     override fun onDestroyView() {

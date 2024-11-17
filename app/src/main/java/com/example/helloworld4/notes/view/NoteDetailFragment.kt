@@ -20,11 +20,15 @@ import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.example.helloworld4.databinding.FragmentNoteDetailBinding
 import com.example.helloworld4.notes.data.Note
 import com.example.helloworld4.notes.intent.NoteIntent
 import com.example.helloworld4.notes.view_model.NoteViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -40,7 +44,7 @@ class NoteDetailFragment : Fragment() {
     private lateinit var requestPermissionLauncher: ActivityResultLauncher<Array<String>>
     private lateinit var title: AppCompatEditText
     private lateinit var text: AppCompatEditText
-    private lateinit var noteViewModel: NoteViewModel
+    private val noteViewModel: NoteViewModel by inject()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -55,7 +59,6 @@ class NoteDetailFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val binding = FragmentNoteDetailBinding.bind(view)
 
-        noteViewModel = ViewModelProvider(requireActivity())[NoteViewModel::class.java]
         imageContainer = binding.ivContainer
         title = binding.etTitle
         text = binding.etText
@@ -71,7 +74,36 @@ class NoteDetailFragment : Fragment() {
         }
 
         binding.btnSave.setOnClickListener {
+            performTaskWithDelay()
+        }
+    }
+
+    private fun showProgressBar() {
+        binding.prBar.visibility = View.VISIBLE
+    }
+
+    private fun hideProgressBar() {
+        binding.prBar.visibility = View.GONE
+    }
+
+    private fun performTaskWithDelay() {
+        showProgressBar()
+        lifecycleScope.launch(Dispatchers.Main) {
+            updateProgressBar()
             saveNote()
+            hideProgressBar()
+        }
+    }
+
+    private suspend fun updateProgressBar() {
+        val totalTime = 3000L
+        val intervalTime = 100L
+        val totalSteps = totalTime / intervalTime
+
+        for (step in 1..totalSteps) {
+            delay(intervalTime)
+            val progress = (step.toFloat() / totalSteps * 100).toInt()
+            binding.prBar.progress = progress
         }
     }
 

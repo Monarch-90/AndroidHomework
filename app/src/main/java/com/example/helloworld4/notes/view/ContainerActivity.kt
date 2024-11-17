@@ -3,6 +3,7 @@ package com.example.helloworld4.notes.view
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import com.example.helloworld4.SplashFragment
 import com.example.helloworld4.databinding.ActivityContainerBinding
 
 class ContainerActivity : AppCompatActivity() {
@@ -13,9 +14,13 @@ class ContainerActivity : AppCompatActivity() {
         binding = ActivityContainerBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        start(savedInstanceState)
+    }
+
+    private fun start(savedInstanceState: Bundle?) {
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
-                .replace(binding.fragmentContainer.id, ToDoListFragment())
+                .replace(binding.fragmentContainer.id, SplashFragment())
                 .commit()
         }
     }
