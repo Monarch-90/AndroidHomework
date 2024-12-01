@@ -1,23 +1,17 @@
 package com.example.helloworld4
 
-import android.content.Intent
 import android.os.Bundle
-import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.example.helloworld4.databinding.FragmentSplashBinding
-import com.example.helloworld4.notes.view.ContainerActivity
-import com.example.helloworld4.notes.view.ToDoListFragment
-import com.example.helloworld4.onboarding.FirstActivity
-import com.example.helloworld4.registration_and_authorization.data.DatabaseManager
-import kotlinx.coroutines.CoroutineScope
+import com.example.helloworld4.view.menu.MenuFragment
+import com.example.helloworld4.view.notes.container_activity.ContainerActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 
 class SplashFragment : Fragment() {
@@ -35,7 +29,6 @@ class SplashFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val binding = FragmentSplashBinding.bind(view)
 
         navigateAfterDelay()
     }
@@ -43,12 +36,12 @@ class SplashFragment : Fragment() {
     private fun navigateAfterDelay() {
         lifecycleScope.launch(Dispatchers.Main) {
             updateProgressBar()
-            (activity as ContainerActivity).navigateTo(ToDoListFragment())
+            (activity as ContainerActivity).navigateTo(MenuFragment())
         }
     }
 
     private suspend fun updateProgressBar() {
-        val totalTime = 5000L
+        val totalTime = 1000L
         val intervalTime = 100L
         val totalSteps = totalTime / intervalTime
 
