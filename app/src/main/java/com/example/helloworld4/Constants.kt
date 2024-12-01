@@ -11,4 +11,5 @@ object Constants {
     const val TEXT_NOTE_KEY = 0
     const val IMAGE_NOTE_KEY = 1
     const val DATA_SEND_KEY = "data"
+    const val BASE_URL = "https://api.disneyapi.dev/"
 }

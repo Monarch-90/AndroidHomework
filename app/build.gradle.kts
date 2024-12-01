@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     id("com.google.devtools.ksp")
     id("org.jetbrains.kotlin.plugin.parcelize")
+    id("kotlin-kapt")
 }
 
 android {
@@ -46,6 +47,11 @@ android {
     viewBinding {
         enable = true
     }
+
+    buildFeatures {
+        dataBinding = true
+    }
+
 }
 
 dependencies {
@@ -67,6 +73,10 @@ dependencies {
     annotationProcessor ("com.github.bumptech.glide:compiler:4.16.0")
     implementation ("androidx.appcompat:appcompat:1.7.0")
     implementation ("com.google.android.material:material:1.12.0")
+    implementation ("io.insert-koin:koin-android:4.0.0")
+    implementation ("com.squareup.retrofit2:retrofit:2.11.0")
+    implementation ("com.squareup.retrofit2:converter-gson:2.11.0")
+    implementation ("com.squareup.okhttp3:logging-interceptor:4.12.0")
     implementation(libs.androidx.room.ktx.v242)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
