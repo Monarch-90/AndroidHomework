@@ -23,5 +23,8 @@
     <string name="enter_title">Enter title</string>
     <string name="logined">Logined: </string>
     <string name="btn_save">save</string>
+    <string name="logout">Logout</string>
+    <string name="to_do_list">To-Do List</string>
+    <string name="disney">Disney</string>
 
 </resources>

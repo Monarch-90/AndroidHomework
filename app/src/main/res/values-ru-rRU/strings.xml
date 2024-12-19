@@ -23,5 +23,8 @@
     <string name="enter_title">Введите название</string>
     <string name="logined">"Вошел: "</string>
     <string name="btn_save">Сохранить</string>
+    <string name="logout">Выход</string>
+    <string name="to_do_list">Заметки</string>
+    <string name="disney">Disney</string>
 
 </resources>
