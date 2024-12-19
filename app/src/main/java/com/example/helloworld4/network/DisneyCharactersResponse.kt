@@ -5,7 +5,7 @@ data class DisneyCharactersResponse(
 )
 
 data class Character(
-    val _id: String,
+    val id: String,
     val name: String,
     val imageUrl: String
 )

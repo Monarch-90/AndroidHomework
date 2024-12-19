@@ -19,7 +19,7 @@ class DisneyCharactersFragment : Fragment(R.layout.fragment_disney_characters) {
     private val charactersViewModel: CharactersViewModel by viewModels()
     private var _binding: FragmentDisneyCharactersBinding? = null
     private val binding get() = _binding!!
-    private lateinit var adapter: CharactersAdapter
+    private var adapter: CharactersAdapter? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

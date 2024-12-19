@@ -1,29 +1,29 @@
 package com.example.helloworld4.view.notes.fragments
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.helloworld4.databinding.FragmentTodolistBinding
+import com.example.helloworld4.Constants
 import com.example.helloworld4.data.model.Note
-import com.example.helloworld4.intent.NoteIntent
+import com.example.helloworld4.databinding.FragmentTodolistBinding
+import com.example.helloworld4.view.ContainerActivity
 import com.example.helloworld4.view.notes.adapter.RvAdapter
-import com.example.helloworld4.view.notes.container_activity.ContainerActivity
+import com.example.helloworld4.view_model.ImageViewModel
 import com.example.helloworld4.view_model.NoteViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class ToDoListFragment : Fragment() {
     private var _binding: FragmentTodolistBinding? = null
     private val binding get() = _binding!!
-    private lateinit var adapter: RvAdapter
+    private var adapter: RvAdapter? = null
     private val toDoList = mutableListOf<Note>()
-    private val noteViewModel: NoteViewModel by inject()
+    private var imageViewModel: ImageViewModel? = null
+    private val noteViewModel: NoteViewModel by viewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -36,50 +36,37 @@ class ToDoListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val binding = FragmentTodolistBinding.bind(view)
 
+        imageViewModelInitialization()
+        setupRecyclerView()
+
+        binding.btnAdd.setOnClickListener {
+            newNote()
+        }
+    }
+
+    private fun imageViewModelInitialization() {
+        imageViewModel = ViewModelProvider(this)[ImageViewModel::class.java]
+    }
+
+    private fun getCurrentUserId(): Long {
+        val sharedPreferences =
+            requireContext().getSharedPreferences(Constants.USER_PREFS, Context.MODE_PRIVATE)
+        return sharedPreferences.getLong(Constants.CURRENT_USER_ID, -1)
+    }
+
+    private fun setupRecyclerView() {
         adapter = RvAdapter(toDoList)
         binding.recView.adapter = adapter
         binding.recView.layoutManager = LinearLayoutManager(requireContext())
 
-        noteViewModel.state.observe(viewLifecycleOwner) { state ->
-            adapter.updateNotes(state.notes)
-        }
-
-        binding.btnAdd.setOnClickListener {
-            performTaskWithDelay()
-        }
-
-        noteViewModel.processIntent(NoteIntent.LoadNotes)
-    }
-
-    private fun showProgressBar() {
-        binding.prBar.visibility = View.VISIBLE
-    }
-
-    private fun hideProgressbar() {
-        binding.prBar.visibility = View.GONE
-    }
-
-    private suspend fun updateProgressBar() {
-        val totalTime = 3000L
-        val intervalTime = 100L
-        val totalSteps = totalTime / intervalTime
-
-        for(step in 1..totalSteps) {
-            delay(intervalTime)
-            val progress = (step.toFloat() / totalSteps * 100).toInt()
-            binding.prBar.progress = progress
+        noteViewModel.getUserNotes(getCurrentUserId()).observe(viewLifecycleOwner) { notes ->
+            adapter?.updateNotes(notes)
         }
     }
 
-    private fun performTaskWithDelay() {
-        showProgressBar()
-        lifecycleScope.launch(Dispatchers.Main) {
-            updateProgressBar()
-            (activity as ContainerActivity).navigateTo(NoteDetailFragment())
-            hideProgressbar()
-        }
+    private fun newNote() {
+        (activity as ContainerActivity).navigateTo(NoteDetailFragment())
     }
 
     override fun onDestroyView() {

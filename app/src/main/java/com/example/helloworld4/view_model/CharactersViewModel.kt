@@ -12,7 +12,6 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class CharactersViewModel : ViewModel() {
-
     private val _characters = MutableLiveData<List<Character>>()
     val characters: LiveData<List<Character>> get() = _characters
 

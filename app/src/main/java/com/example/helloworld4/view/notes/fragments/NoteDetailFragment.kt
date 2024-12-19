@@ -1,9 +1,8 @@
 package com.example.helloworld4.view.notes.fragments
 
-import android.Manifest
 import android.app.Activity.RESULT_OK
+import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Bundle
@@ -17,18 +16,16 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.AppCompatEditText
 import androidx.appcompat.widget.AppCompatImageView
-import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import com.example.helloworld4.databinding.FragmentNoteDetailBinding
+import com.example.helloworld4.Constants
 import com.example.helloworld4.data.model.Note
-import com.example.helloworld4.intent.NoteIntent
+import com.example.helloworld4.databinding.FragmentNoteDetailBinding
+import com.example.helloworld4.view_model.ImageViewModel
 import com.example.helloworld4.view_model.NoteViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -38,13 +35,13 @@ import java.util.Locale
 class NoteDetailFragment : Fragment() {
     private var _binding: FragmentNoteDetailBinding? = null
     private val binding get() = _binding!!
-    private lateinit var getImage: ActivityResultLauncher<Intent>
-    private lateinit var imageContainer: AppCompatImageView
+    private var getImage: ActivityResultLauncher<Intent>? = null
+    private var imageContainer: AppCompatImageView? = null
     private var currentPhotoUri: Uri? = null
-    private lateinit var requestPermissionLauncher: ActivityResultLauncher<Array<String>>
-    private lateinit var title: AppCompatEditText
-    private lateinit var text: AppCompatEditText
-    private val noteViewModel: NoteViewModel by inject()
+    private var title: AppCompatEditText? = null
+    private var text: AppCompatEditText? = null
+    private val noteViewModel: NoteViewModel by viewModel()
+    private val imageViewModel: ImageViewModel by viewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -57,7 +54,6 @@ class NoteDetailFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val binding = FragmentNoteDetailBinding.bind(view)
 
         imageContainer = binding.ivContainer
         title = binding.etTitle
@@ -70,40 +66,11 @@ class NoteDetailFragment : Fragment() {
         registerOpenOrCreateImage()
 
         binding.btnImage.setOnClickListener {
-            handleImageSelection()
+            openChooser()
         }
 
         binding.btnSave.setOnClickListener {
-            performTaskWithDelay()
-        }
-    }
-
-    private fun showProgressBar() {
-        binding.prBar.visibility = View.VISIBLE
-    }
-
-    private fun hideProgressBar() {
-        binding.prBar.visibility = View.GONE
-    }
-
-    private fun performTaskWithDelay() {
-        showProgressBar()
-        lifecycleScope.launch(Dispatchers.Main) {
-            updateProgressBar()
             saveNote()
-            hideProgressBar()
-        }
-    }
-
-    private suspend fun updateProgressBar() {
-        val totalTime = 3000L
-        val intervalTime = 100L
-        val totalSteps = totalTime / intervalTime
-
-        for (step in 1..totalSteps) {
-            delay(intervalTime)
-            val progress = (step.toFloat() / totalSteps * 100).toInt()
-            binding.prBar.progress = progress
         }
     }
 
@@ -111,8 +78,10 @@ class NoteDetailFragment : Fragment() {
         val note = createNoteFromInput()
 
         if (note != null) {
-            noteViewModel.processIntent(NoteIntent.AddNote(note))
-            requireActivity().supportFragmentManager.popBackStack()
+            lifecycleScope.launch {
+                noteViewModel.insertNote(note)
+                requireActivity().supportFragmentManager.popBackStack()
+            }
         } else {
             showMessage("All fields are empty")
         }
@@ -122,32 +91,31 @@ class NoteDetailFragment : Fragment() {
         val note = createNoteFromInput()
 
         if (note != null) {
-            noteViewModel.processIntent(NoteIntent.ShareNote(note))
-            shareNoteExternally(title.text.toString(), text.text.toString())
+            shareNoteExternally(title?.text.toString(), text?.text.toString())
         } else {
             showMessage("All fields are empty")
         }
     }
 
     private fun createNoteFromInput(): Note? {
-        val title = title.text.toString()
-        val text = text.text.toString()
+        val title = title?.text.toString()
+        val text = text?.text.toString()
         val date = getCurrentDate()
         val imageUri = currentPhotoUri?.toString()
-
+        val userId = getCurrentUserId()
         return if (title.isNotEmpty() || text.isNotEmpty() || imageUri != null) {
-            Note(title, text, date, imageUri)
+            Note(userId = userId, title = title, text = text, date = date, imageUri = imageUri)
         } else {
             null
         }
     }
 
-    private fun handleImageSelection() {
-        if (checkPermissions()) {
-            openChooser()
-        } else {
-            requestPermissions()
-        }
+    private fun getCurrentUserId(): Long {
+        val sharedPreferences = requireContext().getSharedPreferences(
+            Constants.USER_PREFS,
+            Context.MODE_PRIVATE
+        )
+        return sharedPreferences.getLong(Constants.CURRENT_USER_ID, -1)
     }
 
     private fun registerOpenOrCreateImage() {
@@ -157,58 +125,35 @@ class NoteDetailFragment : Fragment() {
                     val data: Intent? = result.data
                     if (data?.data != null) {
                         currentPhotoUri = data.data
-                        imageContainer.setImageURI(currentPhotoUri)
+                        try {
+                            currentPhotoUri?.let { uri ->
+                                val localUri =
+                                    imageViewModel.copyImageToLocalStorage(requireContext(), uri)
+                                if (localUri != null) {
+                                    currentPhotoUri = localUri
+                                    imageContainer?.setImageURI(localUri)
+                                } else {
+                                    showMessage("Error copying image to local storage")
+                                }
+                            }
+                        } catch (_: Exception) {
+                            showMessage("Error processing image URI")
+                        }
                     } else if (currentPhotoUri != null) {
                         val bitmap = currentPhotoUri?.let { uri ->
                             val source =
                                 ImageDecoder.createSource(requireActivity().contentResolver, uri)
                             ImageDecoder.decodeBitmap(source)
                         }
-                        imageContainer.setImageBitmap(bitmap)
+                        imageContainer?.setImageBitmap(bitmap)
                     }
                 } else {
                     showMessage("Failed to get image")
                 }
             }
-        requestPermissionLauncher = registerForActivityResult(
-            ActivityResultContracts.RequestMultiplePermissions()
-        ) { permissions ->
-            if (permissions[Manifest.permission.CAMERA] == true &&
-                permissions[Manifest.permission.READ_EXTERNAL_STORAGE] == true &&
-                permissions[Manifest.permission.WRITE_EXTERNAL_STORAGE] == true
-            ) {
-                openChooser()
-            } else {
-                showMessage("Permissions are required")
-            }
-        }
     }
 
-    private fun checkPermissions(): Boolean {
-        val permissions = arrayOf(
-            Manifest.permission.CAMERA,
-            Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE
-        )
-        return permissions.all { permission ->
-            ContextCompat.checkSelfPermission(
-                requireContext(),
-                permission
-            ) == PackageManager.PERMISSION_GRANTED
-        }
-    }
-
-    private fun requestPermissions() {
-        requestPermissionLauncher.launch(
-            arrayOf(
-                Manifest.permission.CAMERA,
-                Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
-            )
-        )
-    }
-
-    private fun createImageFile(): File {
+    private fun createPhotoFile(): File {
         val timeStamp: String =
             SimpleDateFormat("ddMMyyyy_HHmm", Locale.getDefault()).format(Date())
         val storageDir: File =
@@ -223,7 +168,7 @@ class NoteDetailFragment : Fragment() {
             Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
         val takePhotoIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         val photoFile: File? = try {
-            createImageFile()
+            createPhotoFile()
         } catch (_: IOException) {
             showMessage("Error adding image")
             null
@@ -235,7 +180,7 @@ class NoteDetailFragment : Fragment() {
         }
         val chooserIntent = Intent.createChooser(pickPhotoIntent, "Select source")
         chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, arrayOf(takePhotoIntent))
-        getImage.launch(chooserIntent)
+        getImage?.launch(chooserIntent)
     }
 
     private fun shareNoteExternally(title: String?, text: String?) {

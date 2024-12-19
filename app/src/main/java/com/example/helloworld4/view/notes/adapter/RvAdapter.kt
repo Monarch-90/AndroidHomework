@@ -6,9 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.helloworld4.Constants
+import com.example.helloworld4.data.model.Note
 import com.example.helloworld4.databinding.RvImageSampleBinding
 import com.example.helloworld4.databinding.RvTextSampleBinding
-import com.example.helloworld4.data.model.Note
 
 class RvAdapter(private var list: List<Note>) :
     RecyclerView.Adapter<RvAdapter.BaseViewHolder>() {
@@ -32,7 +32,12 @@ class RvAdapter(private var list: List<Note>) :
             binding.rviTitle.text = note.title
             binding.rviText.text = note.text
             binding.rviDate.text = note.date
-            binding.ivImageIcon.setImageURI(Uri.parse(note.imageUri))
+
+            try {
+                binding.ivImageIcon.setImageURI(Uri.parse(note.imageUri))
+            } catch (_: Exception) {
+                binding.ivImageIcon.visibility = View.GONE
+            }
         }
     }
 
@@ -69,8 +74,10 @@ class RvAdapter(private var list: List<Note>) :
         holder.bind(note)
     }
 
-    fun updateNotes(newNotes: List<Note>) {
-        list = newNotes
-        notifyDataSetChanged()
+    fun updateNotes(newNotes: List<Note>?) {
+        newNotes?.let {
+            list = it
+            notifyDataSetChanged()
+        }
     }
 }

@@ -1,19 +1,24 @@
 package com.example.helloworld4.view_model
 
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import com.example.helloworld4.intent.NoteIntent
-import com.example.helloworld4.reducer.NoteReducer
-import com.example.helloworld4.state.NoteState
+import androidx.lifecycle.viewModelScope
+import com.example.helloworld4.data.model.Note
+import com.example.helloworld4.data.repository.NoteRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
-class NoteViewModel(private val reducer: NoteReducer) : ViewModel() {
-    private val _state = MutableLiveData(NoteState())
-    val state: LiveData<NoteState> get() = _state
+class NoteViewModel(private val noteRepository: NoteRepository, application: Application) :
+    AndroidViewModel(application) {
 
-    fun processIntent(intent: NoteIntent) {
-        val currentState = _state.value ?: NoteState()
-        val newState = reducer.reduce(currentState, intent)
-        _state.value = newState
+    fun getUserNotes(userId: Long): LiveData<List<Note>> {
+        return noteRepository.getNotesByUserId(userId)
+    }
+
+    fun insertNote(note: Note) {
+        viewModelScope.launch(Dispatchers.IO) {
+            noteRepository.insertNote(note)
+        }
     }
 }
